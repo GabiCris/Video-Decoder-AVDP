@@ -24,7 +24,7 @@ public class YUVtoPPM {
 
                 Double R = Y + 1.402 * (V - 128);
                 Double G = Y - 0.344136 * (U - 128) - 0.714136 * (V - 128);
-                Double B = Y + 0.1772 * (U - 128);
+                Double B = Y + 1.7790 * (U - 128);
 
                 outputMatrix[line][column] = new RGB(R.intValue(), G.intValue(), B.intValue());
             }

@@ -27,7 +27,7 @@ public class Encoder {
                     column++;
                     if (column % 8 == 0) {
                         line++;
-                        column = 0;
+                        column -= 8;
                     }
                 }
             }
@@ -53,7 +53,7 @@ public class Encoder {
                     column++;
                     if (column % 8 == 0) {
                         line++;
-                        column = 0;
+                        column -= 8;
                     }
                 }
             }
@@ -80,7 +80,7 @@ public class Encoder {
                     column++;
                     if (column % 8 == 0) {
                         line++;
-                        column = 0;
+                        column -= 8;
                     }
                 }
             }
@@ -102,7 +102,7 @@ public class Encoder {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 sampledStore.getStore()[i][j] = (toSample.getStore()[line][column] + toSample.getStore()[line][column+1]
-                        + toSample.getStore()[line+1][column] + toSample.getStore()[line+1][column+1]) / 4;
+                        + toSample.getStore()[line+1][column] + toSample.getStore()[line+1][column+1]) / 4.0;
                 column += 2;
             }
             line += 2;

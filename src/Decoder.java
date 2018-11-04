@@ -26,13 +26,13 @@ public class Decoder {
                     column++;
                     if (column % 8 == 0) {
                         line++;
-                        column = 0;
+                        column -= 8;
                     }
                 }
             }
             line -= 8;
             column += 8;
-            if (column == encoder.getPpmReader().getWidth()-1) {
+            if (column == encoder.getPpmReader().getWidth()) {
                 column = 0;
                 line += 8;
             }
@@ -50,7 +50,7 @@ public class Decoder {
                     column++;
                     if (column % 8 == 0) {
                         line++;
-                        column = 0;
+                        column -= 8;
                     }
                 }
             }
@@ -74,7 +74,7 @@ public class Decoder {
                     column++;
                     if (column % 8 == 0) {
                         line++;
-                        column = 0;
+                        column -= 8;
                     }
                 }
             }
@@ -103,8 +103,7 @@ public class Decoder {
             line += 2;
             column = 0;
         }
-        //System.out.println(toResize);
-        //System.out.println(sampledStore);
+
         return sampledStore;
     }
 
