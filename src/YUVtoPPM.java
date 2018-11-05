@@ -26,6 +26,9 @@ public class YUVtoPPM {
                 Double G = Y - 0.344136 * (U - 128) - 0.714136 * (V - 128);
                 Double B = Y + 1.7790 * (U - 128);
 
+                if (R > 255) R = 255.0;
+                if (G > 255) G = 255.0;
+                if (B > 255) B = 255.0;
                 outputMatrix[line][column] = new RGB(R.intValue(), G.intValue(), B.intValue());
             }
         }
