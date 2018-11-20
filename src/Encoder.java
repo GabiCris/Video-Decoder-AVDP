@@ -98,11 +98,12 @@ public class Encoder {
     public BlockStore sampleBlock(BlockStore toSample, int position, String type) {
         BlockStore sampledStore = new BlockStore(4, type, position);
         int line = 0;
-        int column = 0;
+        int column =  0;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                sampledStore.getStore()[i][j] = (toSample.getStore()[line][column] + toSample.getStore()[line][column+1]
-                        + toSample.getStore()[line+1][column] + toSample.getStore()[line+1][column+1]) / 4.0;
+                double aux = (toSample.getStore()[line][column] + toSample.getStore()[line][column + 1]
+                        + toSample.getStore()[line + 1][column] + toSample.getStore()[line + 1][column + 1]) / 4.0;
+                sampledStore.getStore()[i][j] = aux;
                 column += 2;
             }
             line += 2;
@@ -125,5 +126,17 @@ public class Encoder {
 
     public PPMReader getPpmReader() {
         return ppmReader;
+    }
+
+    public void setEncodedY(List<BlockStore> encodedY) {
+        this.encodedY = encodedY;
+    }
+
+    public void setEncodedU(List<BlockStore> encodedU) {
+        this.encodedU = encodedU;
+    }
+
+    public void setEncodedV(List<BlockStore> encodedV) {
+        this.encodedV = encodedV;
     }
 }
