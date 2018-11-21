@@ -88,6 +88,9 @@ public class Decoder {
     }
 
     public BlockStore resizeBlock(BlockStore toResize, int position, String type) {
+        if (toResize.getSize() == 8) {
+            return toResize;
+        }
         BlockStore sampledStore = new BlockStore(8, type, position);
         int line = 0;
         int column = 0;

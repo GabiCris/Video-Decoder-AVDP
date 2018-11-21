@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +51,8 @@ public class DCTQuant {
                 int sum = 0;
                 for (int k = 0; k < 8; k++) {
                     for (int l = 0; l < 8; l++) {
-                        sum += (b.getStore()[k][l] - 128) * Math.cos((2*l+1)*i*Math.PI/16) *
-                                Math.cos((2*k+1)*j*Math.PI/16);
+                        sum += (b.getStore()[k][l] - 128) * Math.cos(((2*k+1)*i*Math.PI)/16) *
+                                Math.cos(((2*l+1)*j*Math.PI)/16);
                     }
                 }
                 transformedBlock.getStore()[i][j] = 0.25 * alphaI * alphaJ * sum;
@@ -61,12 +62,13 @@ public class DCTQuant {
     }
 
     private BlockStore quantizeBlock(BlockStore b) {
+        BlockStore newBlock = new BlockStore(8,"", 0);
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                b.getStore()[i][j] = Math.round(b.getStore()[i][j]/ quantizationMatrix[i][j]);
+                newBlock.getStore()[i][j] = Math.floor(b.getStore()[i][j] / quantizationMatrix[i][j]);
             }
         }
-        return b;
+        return newBlock;
     }
 
     public BlockStore resizeBlock(BlockStore toResize, int position, String type) {

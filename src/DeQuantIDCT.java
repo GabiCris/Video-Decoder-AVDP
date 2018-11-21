@@ -12,6 +12,7 @@ public class DeQuantIDCT {
 
     public DeQuantIDCT(DCTQuant dctQuant) {
         this.dctQuant = dctQuant;
+        transformBlocks();
     }
 
     private void transformBlocks(){
@@ -19,20 +20,21 @@ public class DeQuantIDCT {
             decodedY.add(inverseDct(deQuantizeBlock(b)));
         }
         for (BlockStore b: dctQuant.getQuantizedU()) {
-            decodedU.add(sampleBlock(inverseDct(deQuantizeBlock(b)), 0, ""));
+            decodedU.add(inverseDct(deQuantizeBlock(b)));
         }
         for (BlockStore b: dctQuant.getQuantizedV()) {
-            decodedV.add(sampleBlock(inverseDct(deQuantizeBlock(b)), 0, ""));
+            decodedV.add(inverseDct(deQuantizeBlock(b)));
         }
     }
 
     private BlockStore deQuantizeBlock(BlockStore b) {
+        BlockStore newBlock = new BlockStore(8,"", 0);
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                b.getStore()[i][j] = b.getStore()[i][j] * dctQuant.getQuantizationMatrix()[i][j];
+                newBlock.getStore()[i][j] = b.getStore()[i][j] * dctQuant.getQuantizationMatrix()[i][j];
             }
         }
-        return b;
+        return newBlock;
     }
 
     private BlockStore inverseDct(BlockStore b) {
@@ -43,10 +45,10 @@ public class DeQuantIDCT {
                 int sum = 0;
                 for (int k = 0; k < 8; k++) {
                     for (int l = 0; l < 8; l++) {
-                        double alphaK = i == 0 ? 1/Math.sqrt(2) : 1;
-                        double alphaL = j == 0 ? 1/Math.sqrt(2) : 1;
-                        sum += alphaK * alphaL * b.getStore()[k][l] * Math.cos((2*i+1)*k*Math.PI/16) *
-                                Math.cos((2*j+1)*l*Math.PI/16);
+                        double alphaK = (i == 0) ? 1/Math.sqrt(2) : 1;
+                        double alphaL = (j == 0) ? 1/Math.sqrt(2) : 1;
+                        sum += alphaK * alphaL * b.getStore()[k][l] * Math.cos(((2*i+1)*k*Math.PI)/16) *
+                                Math.cos(((2*j+1)*l*Math.PI)/16);
                     }
                 }
                 transformedBlock.getStore()[i][j] = 0.25 * sum + 128;
