@@ -27,15 +27,15 @@ public class DCTQuant {
 
     private void transformBlocks() {
         for (BlockStore b: encoder.getEncodedY()) {
-            BlockStore tr = discreteCosineTr(b);
+            BlockStore tr = discreteCosineTr(subtractBlock(b));
             quantizedY.add(quantizeBlock(tr));
         }
         for (BlockStore b: encoder.getEncodedU()) {
-            BlockStore tr = discreteCosineTr(resizeBlock(b, 0, ""));
+            BlockStore tr = discreteCosineTr(subtractBlock(resizeBlock(b, 0, "")));
             quantizedU.add(quantizeBlock(tr));
         }
         for (BlockStore b: encoder.getEncodedV()) {
-            BlockStore tr = discreteCosineTr(resizeBlock(b, 0, ""));
+            BlockStore tr = discreteCosineTr(subtractBlock(resizeBlock(b, 0, "")));
             quantizedV.add(quantizeBlock(tr));
         }
     }
@@ -43,19 +43,16 @@ public class DCTQuant {
     private BlockStore discreteCosineTr(BlockStore b) {
         BlockStore transformedBlock = new BlockStore(8, "", 0);
 
-        for (int i = 0; i < 8; i++) {
-            double alphaI = (i == 0) ? 1/Math.sqrt(2) : 1;
-            for (int j = 0; j < 8; j++) {
-                double alphaJ = (j == 0) ? 1/Math.sqrt(2) : 1;
-
+        for (int u = 0; u < 8; u++) {
+            for (int v = 0; v < 8; v++) {
                 int sum = 0;
-                for (int k = 0; k < 8; k++) {
-                    for (int l = 0; l < 8; l++) {
-                        sum += (b.getStore()[k][l] - 128) * Math.cos(((2*k+1)*i*Math.PI)/16) *
-                                Math.cos(((2*l+1)*j*Math.PI)/16);
+                for (int x = 0; x < 8; x++) {
+                    for (int y = 0; y < 8; y++) {
+                        sum += b.getStore()[x][y] * Math.cos(((2*x+1)*u*Math.PI)/16) *
+                                Math.cos(((2*y+1)*v*Math.PI)/16);
                     }
                 }
-                transformedBlock.getStore()[i][j] = 0.25 * alphaI * alphaJ * sum;
+                transformedBlock.getStore()[u][v] = 0.25 * alpha(u) * alpha(v) * sum;
             }
         }
         return transformedBlock;
@@ -65,7 +62,8 @@ public class DCTQuant {
         BlockStore newBlock = new BlockStore(8,"", 0);
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                newBlock.getStore()[i][j] = Math.floor(b.getStore()[i][j] / quantizationMatrix[i][j]);
+               // newBlock.getStore()[i][j] = Math.floor(b.getStore()[i][j] / quantizationMatrix[i][j]);
+                newBlock.getStore()[i][j] = b.getStore()[i][j] / quantizationMatrix[i][j];
             }
         }
         return newBlock;
@@ -91,6 +89,19 @@ public class DCTQuant {
         return sampledStore;
     }
 
+    private double alpha(int value) {
+        return value > 0 ? 1 : (1 / Math.sqrt(2.0));
+    }
+
+    private BlockStore subtractBlock(BlockStore b) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                b.getStore()[i][j] -= 128;
+            }
+        }
+        return b;
+    }
+
     public List<BlockStore> getQuantizedY() {
         return quantizedY;
     }
@@ -105,5 +116,17 @@ public class DCTQuant {
 
     public int[][] getQuantizationMatrix() {
         return quantizationMatrix;
+    }
+
+    public void setQuantizedY(List<BlockStore> quantizedY) {
+        this.quantizedY = quantizedY;
+    }
+
+    public void setQuantizedU(List<BlockStore> quantizedU) {
+        this.quantizedU = quantizedU;
+    }
+
+    public void setQuantizedV(List<BlockStore> quantizedV) {
+        this.quantizedV = quantizedV;
     }
 }

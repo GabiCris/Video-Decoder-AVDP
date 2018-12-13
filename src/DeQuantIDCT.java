@@ -45,9 +45,7 @@ public class DeQuantIDCT {
                 int sum = 0;
                 for (int k = 0; k < 8; k++) {
                     for (int l = 0; l < 8; l++) {
-                        double alphaK = (i == 0) ? 1/Math.sqrt(2) : 1;
-                        double alphaL = (j == 0) ? 1/Math.sqrt(2) : 1;
-                        sum += alphaK * alphaL * b.getStore()[k][l] * Math.cos(((2*i+1)*k*Math.PI)/16) *
+                        sum += alpha(k) * alpha(l) * b.getStore()[k][l] * Math.cos(((2*i+1)*k*Math.PI)/16) *
                                 Math.cos(((2*j+1)*l*Math.PI)/16);
                     }
                 }
@@ -72,6 +70,10 @@ public class DeQuantIDCT {
             column = 0;
         }
         return sampledStore;
+    }
+
+    private double alpha(int value) {
+        return value > 0 ? 1 : (1 / Math.sqrt(2.0));
     }
 
     public List<BlockStore> getDecodedY() {
